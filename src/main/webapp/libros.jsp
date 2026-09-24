@@ -13,6 +13,7 @@
 	<h2>Catálogo de Libros</h2>
 
 	<a href="${pageContext.request.contextPath}/prestamos">Mis Préstamos</a> |
+	<a href="${pageContext.request.contextPath}/libros?accion=nuevo">Agregar Libro</a> |
 	<a href="${pageContext.request.contextPath}/logout">Cerrar sesión</a>
 
 	<c:if test="${not empty error}">
@@ -38,14 +39,26 @@
 				<td><c:out value="${libro.isbn}" /></td>
 				<td><c:out value="${libro.disponible}" /></td>
 
-				<td><c:if test="${libro.disponible}">
+				<td>
+					<c:if test="${libro.disponible}">
 						<form action="${pageContext.request.contextPath}/prestamos"
-							method="POST">
-							<input type="hidden" name="accion" value="prestar"> <input
-								type="hidden" name="libroId" value="${libro.id}">
+							method="POST" style="display:inline;">
+							<input type="hidden" name="accion" value="prestar">
+							<input type="hidden" name="libroId" value="${libro.id}">
 							<button type="submit">Prestar</button>
 						</form>
-					</c:if></td>
+					</c:if>
+
+					<a href="${pageContext.request.contextPath}/libros?accion=editar&id=${libro.id}">Editar</a>
+
+					<form action="${pageContext.request.contextPath}/libros"
+						method="POST" style="display:inline;"
+						onsubmit="return confirm('¿Seguro que quieres eliminar este libro?');">
+						<input type="hidden" name="accion" value="eliminar">
+						<input type="hidden" name="id" value="${libro.id}">
+						<button type="submit">Eliminar</button>
+					</form>
+				</td>
 			</tr>
 		</c:forEach>
 	</table>

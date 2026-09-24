@@ -17,6 +17,8 @@ import model.Usuario;
 @WebServlet("/libros")
 public class LibroServlet extends HttpServlet {
 
+    private LibroDAO libroDao = new LibroDAO();
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession sesion = request.getSession();
@@ -26,18 +28,71 @@ public class LibroServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/index.jsp");
             return;
         }
-        
-        LibroDAO libroDao = new LibroDAO();
+
+        String accion = request.getParameter("accion");
 
         try {
-            List<Libro> libros = libroDao.listarTodos();
-            request.setAttribute("libros", libros);
-            request.getRequestDispatcher("/libros.jsp").forward(request, response);
+            if ("nuevo".equals(accion)) {
+                request.getRequestDispatcher("/libro-form.jsp").forward(request, response);
+
+            } else if ("editar".equals(accion)) {
+                int id = Integer.parseInt(request.getParameter("id"));
+                Libro libro = libroDao.buscarPorId(id);
+                request.setAttribute("libro", libro);
+                request.getRequestDispatcher("/libro-form.jsp").forward(request, response);
+
+            } else {
+                List<Libro> libros = libroDao.listarTodos();
+                request.setAttribute("libros", libros);
+                request.getRequestDispatcher("/libros.jsp").forward(request, response);
+            }
 
         } catch (SQLException e) {
             e.printStackTrace();
-            request.setAttribute("error", "Error al cargar los libros");
+            request.setAttribute("error", "Error al procesar la solicitud");
             request.getRequestDispatcher("/libros.jsp").forward(request, response);
+        }
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        HttpSession sesion = request.getSession();
+        Usuario usuario = (Usuario) sesion.getAttribute("usuario");
+
+        if (usuario == null) {
+            response.sendRedirect(request.getContextPath() + "/index.jsp");
+            return;
+        }
+
+        String accion = request.getParameter("accion");
+
+        try {
+            if ("guardar".equals(accion)) {
+                String idParam = request.getParameter("id");
+                String titulo = request.getParameter("titulo");
+                String autor = request.getParameter("autor");
+                String isbn = request.getParameter("isbn");
+                boolean disponible = request.getParameter("disponible") != null;
+
+                if (idParam == null || idParam.isEmpty()) {
+                    Libro nuevoLibro = new Libro(0, titulo, autor, isbn, disponible);
+                    libroDao.insertar(nuevoLibro);
+                } else {
+                    int id = Integer.parseInt(idParam);
+                    Libro libroExistente = new Libro(id, titulo, autor, isbn, disponible);
+                    libroDao.actualizar(libroExistente);
+                }
+
+            } else if ("eliminar".equals(accion)) {
+                int id = Integer.parseInt(request.getParameter("id"));
+                libroDao.eliminar(id);
+            }
+
+            response.sendRedirect(request.getContextPath() + "/libros");
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            response.sendRedirect(request.getContextPath() + "/libros");
         }
     }
 }
