@@ -77,15 +77,20 @@ public class LibroServlet extends HttpServlet {
                 if (idParam == null || idParam.isEmpty()) {
                     Libro nuevoLibro = new Libro(0, titulo, autor, isbn, disponible);
                     libroDao.insertar(nuevoLibro);
+                    response.sendRedirect(request.getContextPath() + "/libros?msg=creado");
                 } else {
                     int id = Integer.parseInt(idParam);
                     Libro libroExistente = new Libro(id, titulo, autor, isbn, disponible);
                     libroDao.actualizar(libroExistente);
+                    response.sendRedirect(request.getContextPath() + "/libros?msg=actualizado");
                 }
+                return;
 
             } else if ("eliminar".equals(accion)) {
                 int id = Integer.parseInt(request.getParameter("id"));
                 libroDao.eliminar(id);
+                response.sendRedirect(request.getContextPath() + "/libros?msg=eliminado");
+                return;
             }
 
             response.sendRedirect(request.getContextPath() + "/libros");

@@ -23,7 +23,7 @@ public class PrestamoServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession sesion = request.getSession();
         Usuario usuario = (Usuario) sesion.getAttribute("usuario");
-        
+
         if (usuario == null) {
             response.sendRedirect(request.getContextPath() + "/index.jsp");
             return;
@@ -46,7 +46,7 @@ public class PrestamoServlet extends HttpServlet {
         String accion = request.getParameter("accion");
         HttpSession sesion = request.getSession();
         Usuario usuario = (Usuario) sesion.getAttribute("usuario");
-        
+
         if (usuario == null) {
             response.sendRedirect(request.getContextPath() + "/index.jsp");
             return;
@@ -57,13 +57,15 @@ public class PrestamoServlet extends HttpServlet {
                 case "prestar":
                     int libroId = Integer.parseInt(request.getParameter("libroId"));
                     prestamoDao.prestar(usuario.getId(), libroId);
-                    break;
+                    response.sendRedirect(request.getContextPath() + "/libros?msg=prestado");
+                    return;
 
                 case "devolver":
                     int prestamoId = Integer.parseInt(request.getParameter("prestamoId"));
                     int libroIdDevolver = Integer.parseInt(request.getParameter("libroId"));
                     prestamoDao.devolver(prestamoId, libroIdDevolver);
-                    break;
+                    response.sendRedirect(request.getContextPath() + "/libros?msg=devuelto");
+                    return;
             }
 
             response.sendRedirect(request.getContextPath() + "/libros");
