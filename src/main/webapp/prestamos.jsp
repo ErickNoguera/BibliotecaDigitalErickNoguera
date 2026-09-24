@@ -12,7 +12,8 @@
 
     <h2>Mis Préstamos</h2>
 
-    <a href="${pageContext.request.contextPath}/libros">Volver al catálogo</a>
+    <a href="${pageContext.request.contextPath}/libros">Volver al catálogo</a> |
+    <a href="${pageContext.request.contextPath}/logout">Cerrar sesión</a>
 
     <c:if test="${not empty error}">
         <p><c:out value="${error}" /></p>

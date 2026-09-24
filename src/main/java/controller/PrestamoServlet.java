@@ -23,6 +23,11 @@ public class PrestamoServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession sesion = request.getSession();
         Usuario usuario = (Usuario) sesion.getAttribute("usuario");
+        
+        if (usuario == null) {
+            response.sendRedirect(request.getContextPath() + "/index.jsp");
+            return;
+        }
 
         try {
             List<PrestamoDTO> prestamos = prestamoDao.listarActivosPorUsuario(usuario.getId());
@@ -41,6 +46,11 @@ public class PrestamoServlet extends HttpServlet {
         String accion = request.getParameter("accion");
         HttpSession sesion = request.getSession();
         Usuario usuario = (Usuario) sesion.getAttribute("usuario");
+        
+        if (usuario == null) {
+            response.sendRedirect(request.getContextPath() + "/index.jsp");
+            return;
+        }
 
         try {
             switch (accion) {

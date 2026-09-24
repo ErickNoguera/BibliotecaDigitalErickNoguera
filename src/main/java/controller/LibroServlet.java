@@ -10,13 +10,23 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import model.Libro;
+import model.Usuario;
 
 @WebServlet("/libros")
 public class LibroServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        HttpSession sesion = request.getSession();
+        Usuario usuario = (Usuario) sesion.getAttribute("usuario");
+
+        if (usuario == null) {
+            response.sendRedirect(request.getContextPath() + "/index.jsp");
+            return;
+        }
+        
         LibroDAO libroDao = new LibroDAO();
 
         try {

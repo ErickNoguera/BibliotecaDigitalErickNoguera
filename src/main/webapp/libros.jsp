@@ -12,6 +12,7 @@
 
 	<h2>Catálogo de Libros</h2>
 
+	<a href="${pageContext.request.contextPath}/prestamos">Mis Préstamos</a> |
 	<a href="${pageContext.request.contextPath}/logout">Cerrar sesión</a>
 
 	<c:if test="${not empty error}">
